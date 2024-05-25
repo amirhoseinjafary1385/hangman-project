@@ -1,0 +1,77 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <link rel="stylesheet" href="{% static 'hangman_game/styles.css' %}">
+</head>
+<body>
+    <h1>Hangman Game</h1>
+    <p>Guess the word:</p>
+    <p id="word"></p>
+    <p>Guesses left: <span id="guesses-left"></span></p>
+    <p>Letters guessed: <span id="letters-guessed"></span></p>
+    <input type="text" id="letter-input" placeholder="Enter a letter">
+    <button onclick="makeGuess()">Guess</button>
+    
+    <img id="hangman-image" src="{% static 'hangman_game/svg/hangman0.svg' %}" alt="Hangman Image">
+
+
+    <script>
+        const words = ['apple', 'banana', 'cherry', 'date', 'fig', 'grape', 'kiwi', 'lemon', 'mango', 'orange','applepie', 'watermelone', ];
+        let word = '';
+        let guessedLetters = [];
+        let guessesLeft = 6;
+    
+        function startGame() {
+            word = words[Math.floor(Math.random() * words.length)];
+            guessedLetters = [];
+            guessesLeft = 6;
+            updateWordDisplay();
+            updateGuessesLeft();
+            updateLettersGuessed();
+        }
+    function makeGuess() {
+    const letter = document.getElementById('letter-input').value.toLowerCase();
+    if (letter.length !== 1 || guessedLetters.includes(letter)) {
+        return;
+    }
+    guessedLetters.push(letter);
+    if (!word.includes(letter)) {
+        guessesLeft--;
+        const hangmanImage = document.getElementById('hangman-image');
+        hangmanImage.src = `{% static 'hangman_game/svg/hangman${6 - guessesLeft}.svg' %}`;
+    }
+    updateWordDisplay();
+    updateGuessesLeft();
+    updateLettersGuessed();
+    if (guessesLeft === 0) {
+        alert('You lost! The word was ' + word);
+        startGame();
+    } else if (!word.split('').some(char => !guessedLetters.includes(char))) {
+        alert('You won!');
+        startGame();
+    }
+}
+        function updateWordDisplay() {
+            const wordDisplay = document.getElementById('word');
+            wordDisplay.innerHTML = word.split('').map(char => (guessedLetters.includes(char) ? char : '_')).join(' ');
+        }
+    
+        function updateGuessesLeft() {
+            const guessesLeftDisplay = document.getElementById('guesses-left');
+            guessesLeftDisplay.innerHTML = guessesLeft;
+        }
+    
+        function updateLettersGuessed() {
+            const lettersGuessedDisplay = document.getElementById('letters-guessed');
+            lettersGuessedDisplay.innerHTML = guessedLetters.join(', ');
+        }
+    
+        startGame();
+    </script>
+</body>
+</html>
