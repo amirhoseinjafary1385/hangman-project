@@ -1,0 +1,8 @@
+#How To Use?
+
+pip install django
+
+________________
+#*How - To - Start*
+python3 manage.py runserver
+
